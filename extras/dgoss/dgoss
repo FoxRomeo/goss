@@ -34,7 +34,7 @@ run(){
     cp "${GOSS_PATH}" "$tmp_dir/goss"
     chmod 755 "$tmp_dir/goss"
     [[ -e "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}" ]] && cp "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}" "$tmp_dir/goss.yaml" && chmod 644 "$tmp_dir/goss.yaml"
-    [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && cp "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir" && chmod 644 "$tmp_dir/goss_wait.yaml"
+    [[ -e "${GOSS_FILES_PATH}/${GOSS_WAIT_FILE:-goss_wait.yaml}" ]] && cp "${GOSS_FILES_PATH}/${GOSS_WAIT_FILE:-goss_wait.yaml}" "$tmp_dir" && chmod 644 "$tmp_dir/${GOSS_WAIT_FILE:-goss_wait.yaml}"
     [[ -n "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && cp "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir" && chmod 644 "$tmp_dir/${GOSS_VARS}"
 
     # Switch between mount or cp files strategy
@@ -92,15 +92,15 @@ GOSS_SLEEP=${GOSS_SLEEP:-0.2}
 case "$1" in
     run)
         run "$@"
-        if [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]]; then
-            info "Found goss_wait.yaml, waiting for it to pass before running tests"
+        if [[ -e "${GOSS_FILES_PATH}/${GOSS_WAIT_FILE:-goss_wait.yaml}" ]]; then
+            info "Found ${GOSS_WAIT_FILE:-goss_wait.yaml}, waiting for it to pass before running tests"
             if [[ -z "${GOSS_VARS}" ]]; then
-                if ! $CONTAINER_RUNTIME exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml validate $GOSS_WAIT_OPTS"; then
+                if ! $CONTAINER_RUNTIME exec "$id" sh -c "/goss/goss -g /goss/${GOSS_WAIT_FILE:-goss_wait.yaml} validate $GOSS_WAIT_OPTS"; then
                     $CONTAINER_RUNTIME logs "$id" >&2
                     error "goss_wait.yaml never passed"
                 fi
             else
-                if ! $CONTAINER_RUNTIME exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml --vars='/goss/${GOSS_VARS}' validate $GOSS_WAIT_OPTS"; then
+                if ! $CONTAINER_RUNTIME exec "$id" sh -c "/goss/goss -g /goss/${GOSS_WAIT_FILE:-goss_wait.yaml} --vars='/goss/${GOSS_VARS}' validate $GOSS_WAIT_OPTS"; then
                     $CONTAINER_RUNTIME logs "$id" >&2
                     error "goss_wait.yaml never passed"
                 fi
@@ -124,7 +124,7 @@ case "$1" in
         info "Run goss add/autoadd to add resources"
         $CONTAINER_RUNTIME exec -it "$id" sh -c 'cd /goss; PATH="/goss:$PATH" exec sh'
         get_docker_file "$id" "/goss/goss.yaml" "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}"
-        get_docker_file "$id" "/goss/goss_wait.yaml" "${GOSS_FILES_PATH}/goss_wait.yaml"
+        get_docker_file "$id" "/goss/goss_wait.yaml" "${GOSS_FILES_PATH}/${GOSS_WAIT_FILE:-goss_wait.yaml}"
         if [[ -n "${GOSS_VARS}" ]]; then
             get_docker_file "$id" "/goss/${GOSS_VARS}" "${GOSS_FILES_PATH}/${GOSS_VARS}"
         fi
