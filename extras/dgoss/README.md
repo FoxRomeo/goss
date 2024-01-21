@@ -75,14 +75,17 @@ Location of the goss binary to use. (Default: `$(which goss)`)
 #####  GOSS_FILE
 Name of the goss file to use. (Default: `goss.yaml`)
 
+#####  GOSS_WAIT_FILE
+Name of the goss_wait file to use. (Default: `goss_wait.yaml`)
+
 ##### GOSS_OPTS
 Options to use for the goss test run. (Default: `--color --format documentation`)
 
 ##### GOSS_WAIT_OPTS
-Options to use for the goss wait run, when `./goss_wait.yaml` exists. (Default: `-r 30s -s 1s > /dev/null`)
+Options to use for the goss wait run, when `./goss_wait.yaml` (GOSS_WAIT_FILE) exists. (Default: `-r 30s -s 1s > /dev/null`)
 
 ##### GOSS_SLEEP
-Time to sleep after running container (and optionally `goss_wait.yaml`) and before running tests. (Default: `0.2`)
+Time to sleep after running container (and optionally `goss_wait.yaml`(or GOSS_WAIT_FILE) ) and before running tests. (Default: `0.2`)
 
 ##### GOSS_FILES_PATH
 Location of the goss yaml files. (Default: `.`)

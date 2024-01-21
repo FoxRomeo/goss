@@ -97,12 +97,12 @@ case "$1" in
             if [[ -z "${GOSS_VARS}" ]]; then
                 if ! $CONTAINER_RUNTIME exec "$id" sh -c "/goss/goss -g /goss/${GOSS_WAIT_FILE:-goss_wait.yaml} validate $GOSS_WAIT_OPTS"; then
                     $CONTAINER_RUNTIME logs "$id" >&2
-                    error "goss_wait.yaml never passed"
+                    error "${GOSS_WAIT_FILE:-goss_wait.yaml} never passed"
                 fi
             else
                 if ! $CONTAINER_RUNTIME exec "$id" sh -c "/goss/goss -g /goss/${GOSS_WAIT_FILE:-goss_wait.yaml} --vars='/goss/${GOSS_VARS}' validate $GOSS_WAIT_OPTS"; then
                     $CONTAINER_RUNTIME logs "$id" >&2
-                    error "goss_wait.yaml never passed"
+                    error "${GOSS_WAIT_FILE:-goss_wait.yaml} never passed"
                 fi
             fi
         fi
